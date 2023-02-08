@@ -1,0 +1,16 @@
+{% extends "../base.twig" %}
+
+{% block header %}
+	<h1>Login</h1>
+{% endblock %}
+
+{% block main %}
+	<form action="/connected" method="POST">
+		<label for="login">Name</label>
+		<input type="text" id="login" name="login">
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password">
+		<button type="submit">Valider</button>
+	</form>
+
+{% endblock %}

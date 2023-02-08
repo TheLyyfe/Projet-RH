@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="./css/styles.css">
+		<link rel="stylesheet" href="https://unpkg.com/papercss@1.9.1/dist/paper.min.css"/>
+		<script src="https://kit.fontawesome.com/f0646d89de.js" crossorigin="anonymous"></script>
+		<title>Document</title>
+	</head>
+
+	<body>
+		<header>
+			<nav class="border fixed split-nav">
+				<div class="nav-brand">
+					<h3>
+						<a href="/entreprises">Mon Petit RH</a>
+					</h3>
+				</div>
+				<div class="collapsible">
+					<input id="collapsible1" type="checkbox" name="collapsible1">
+					<label for="collapsible1">
+						<div class="bar1"></div>
+						<div class="bar2"></div>
+						<div class="bar3"></div>
+					</label>
+					<div class="collapsible-body">
+						{% if user %}
+							<p>Bienvenue
+								{{user.director}}</p>
+						{% else %}
+							<ul class="inline">
+								<li>
+									<label class="paper-btn noback" for="modal-1">Connexion</label>
+								</li>
+								<li>
+									<label class="paper-btn noback" for="modal-2">Inscription</label>
+								</li>
+							</ul>
+						{% endif %}
+					</div>
+				</div>
+			</nav>
+		</header>
+
+
+		<input class="modal-state" id="modal-1" type="checkbox">
+		<div class="modal">
+			<label class="modal-bg" for="modal-1"></label>
+			<div class="modal-body">
+				<label class="btn-close" for="modal-1">X</label>
+				<h4 class="modal-title">Connexion</h4>
+				<form action="/login" method="POST">
+					<div class="form-group">
+						<label for="mail">Adresse mail</label>
+						<input type="mail" id="mail" name="mail">
+					</div>
+					<div class="form-group">
+						<label for="password">Mot de passe</label>
+						<input type="password" id="password" name="password">
+					</div>
+					<button type="submit">Valider</button>
+				</form>
+			</div>
+		</div>
+
+
+		<input class="modal-state" id="modal-2" type="checkbox">
+		<div class="modal">
+			<label class="modal-bg" for="modal-2"></label>
+			<div class="modal-body">
+				<label class="btn-close" for="modal-2">X</label>
+				<h4 class="modal-title">Inscription</h4>
+				<form action="/addEntreprise" method="POST">
+					<div class="form-group">
+						<label for="entrname">Nom de l'entreprise</label>
+						<input type="text" id="entrname" name="entrname">
+					</div>
+					<div class="form-group">
+						<label for="siret">Numéro de SIRET</label>
+						<input type="number" id="siret" name="siret">
+					</div>
+					<div class="form-group">
+						<label for="mail">Adresse mail</label>
+						<input type="mail" id="mail" name="mail">
+					</div>
+					<div class="form-group">
+						<label for="director">Nom du Directeur</label>
+						<input type="text" id="director" name="director">
+					</div>
+					<div class="form-group">
+						<label for="password">Mot de passe</label>
+						<input type="password" id="password" name="password">
+					</div>
+					<button type="submit">Valider</button>
+				</form>
+
+			</div>
+		</div>
+		<main>
+
+			{% if user %}
+				<h1>{{user.entrname}}</h1>
+
+				<section class="employes">
+					<label class="paper-btn noback" for="modal-3">Ajouter un employé</label>
+
+					<input class="modal-state" id="modal-3" type="checkbox">
+					<div class="modal">
+						<label class="modal-bg" for="modal-3"></label>
+						<div class="modal-body">
+							<label class="btn-close" for="modal-3">X</label>
+							<h4 class="modal-title">Ajout d'un esclave</h4>
+							<form action="/addEmployee" method="POST" enctype="multipart/form-data">
+								<div class="form-group">
+									<label for="name">Nom de l'esclave</label>
+									<input type="text" id="name" name="name">
+								</div>
+								<div class="form-group">
+									<label for="fonction">Fonction</label>
+									<input type="text" id="fonction" name="fonction">
+								</div>
+								<div class="form-group">
+									<label for="img">Photo</label>
+									<input type="file" id="img" name="img">
+								</div>
+								<button type="submit">Valider</button>
+							</form>
+
+						</div>
+					</div>
+
+					<table>
+						<thead>
+							<tr>
+								<th>Photo</th>
+								<th>Nom</th>
+								<th>Nombre de blâme</th>
+								<th></th>
+								<th></th>
+							</tr>
+						</thead>
+						{% for employee in employees %}
+							<tbody>
+								<tr>
+									<td><img src="./uploads/{{employee.img}}" alt=""></td>
+									<td>{{employee.name}}</td>
+									<td>{{employee.blame}}
+										<a class="paper-btn btn-danger" href="addBlame/{{employee.id}}">+</a>
+									</td>
+									<td>
+										<label for="modal-4" class="paper-btn btn-secondary" data-employeeid={{employee.id}} onclick="openModal(this)" value="Secondary">Modifier</label>
+									</td>
+									<td>
+										<button class="paper-btn btn-danger deleteEmployee" value={{employee.id}}>Supprimer</button>
+									</td>
+								</tr>
+							</tbody>
+
+							<input class="modal-state" id="modal-4" type="checkbox">
+							<div class="modal" id="modal">
+								<label class="modal-bg" for="modal-4"></label>
+								<div class="modal-body">
+									<label class="btn-close" for="modal-4">X</label>
+									<h4 class="modal-title">Modification</h4>
+									<form action="/updateEmployee/" method="POST" enctype="multipart/form-data">
+										<div class="form-group">
+											<label for="name">Nom de l'esclave</label>
+											<input type="text" id="newName" name="name">
+										</div>
+										<div class="form-group">
+											<label for="fonction">Fonction</label>
+											<input type="text" id="newFonction" name="fonction">
+										</div>
+										<div class="form-group">
+											<label for="blame">Nombre de blâme</label>
+											<input type="number" id="newBlame" name="blame">
+										</div>
+										<div class="form-group">
+											<label for="img">Photo</label>
+											<input type="file" id="newImg" name="img">
+										</div>
+										<button type="submit">Valider</button>
+									</form>
+								</div>
+							{% endfor %}
+						</table>
+
+
+					</div>
+				</div>
+			</section>
+		{% endif %}
+	</body>
+</html></body></html></main>{% if user %}<footer><a class="paper-btn noback btn-danger-outline" href="/logout">Déconnexion</a></footer>{% endif %}<script src="./js/main.js"></script></body></html></body></html></body></html>
